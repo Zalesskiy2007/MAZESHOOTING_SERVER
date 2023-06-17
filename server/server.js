@@ -2,6 +2,7 @@ const http = require("http");
 const express = require("express");
 const morgan = require("morgan");
 const { Server } = require("socket.io");
+const { generateKeyPair } = require("crypto");
 
 const app = express();
 app.use(morgan("combined"));
@@ -39,7 +40,7 @@ function playerJSON(player) {
     health: player.health,
     damage: player.damage,
     color: player.color,
-    id: player.socket.id
+    id: player.socket.id,
   };
 
   return JSON.stringify(obj);
@@ -81,7 +82,7 @@ function reloadOtherPlayers() {
 function reloadPlayer(player) {
   for (let x = 0; x < players.length; x++) {
     if (players[x].socket.id === player.id) {
-      players[x].socket.emit("MFS:Get_Player", playerJSON(player));
+      players[x].socket.emit("MFS:Get_Player", JSON.stringify(player));
       break;
     }
   }
@@ -112,8 +113,10 @@ io.on("connection", (socket) => {
 
 
   socket.on("MTS:Change_Player_State", (msg) => {
-    changePlayerClass(JSON.parse(msg));
-    reloadPlayer(JSON.parse(msg));
+    let g = JSON.parse(msg);
+
+    changePlayerClass(g);
+    reloadPlayer(g);
     reloadOtherPlayers();
   });
 

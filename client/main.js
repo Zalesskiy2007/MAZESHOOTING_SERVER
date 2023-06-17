@@ -25,18 +25,31 @@ async function main() {
         otherPlayers.push(JSON.parse(tmpPlayers[i]));
       }
     }
+    console.log(`-------Other-------`);
     console.log(msg + `::${otherPlayers.length}`);
     console.log(`-------------------`);
   });
 
   socket.on("MFS:Get_Player", function(msg) {
     player = JSON.parse(msg);
+    console.log(`*********Player*********`);
     console.log(msg);
-    console.log(`-+---+-----+---+-+-`);
+    console.log(`************************`);
   });
 
   socket.on("disconnect", () => {
     console.log(socket.id); // undefined
+  });
+
+  //TEST CONTROL
+  document.addEventListener('keydown', (ev) => {
+    if (ev.code == 'KeyW') {
+      player.y += 1;
+      socket.emit("MTS:Change_Player_State", JSON.stringify(player));
+    } else if (ev.code == 'KeyS') {
+      player.y -= 1;
+      socket.emit("MTS:Change_Player_State", JSON.stringify(player));
+    }
   });
 }
 
