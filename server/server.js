@@ -2,7 +2,6 @@ const http = require("http");
 const express = require("express");
 const morgan = require("morgan");
 const { Server } = require("socket.io");
-const { generateKeyPair } = require("crypto");
 
 const app = express();
 app.use(morgan("combined"));

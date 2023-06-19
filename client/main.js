@@ -8,14 +8,6 @@ async function main() {
   // client-side
   socket.on("connect", () => {
     console.log(socket.id); // x8WIv7-mJelg7on_ALbx
-    document.getElementById("playerName").onkeyup = (ev) => {
-      if (ev.code === "Enter") {
-        let playerName = document.getElementById("playerName").value;
-        let playerRoom = document.getElementById("room").value;
-
-        socket.emit("MTS:Player_Settings", [playerName, playerRoom].join('|'));
-      }
-    }
   });
 
   socket.on("MFS:Other_Players", function(msg) {
@@ -42,6 +34,14 @@ async function main() {
   socket.on("disconnect", () => {
     console.log(socket.id); // undefined
   });
+
+  //CREATE PLAYER
+  document.getElementById("start").onclick = () => {
+    let playerName = document.getElementById("playerName").value;
+    let playerRoom = document.getElementById("room").value;
+
+    socket.emit("MTS:Player_Settings", [playerName, playerRoom].join('|'));
+  }
 
   //TEST CONTROL
   document.addEventListener('keydown', (ev) => {
