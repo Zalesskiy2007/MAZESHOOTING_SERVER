@@ -16,7 +16,7 @@ let players = [];
 let onLine = 0;
 
 class _Player {
-  constructor(name, x, y, z, health, damage, color, sock) {
+  constructor(name, x, y, z, health, damage, color, sock, room) {
     this.x = x;
     this.y = y;
     this.z = z;
@@ -25,6 +25,7 @@ class _Player {
     this.name = name;
     this.color = color;
     this.socket = sock;
+    this.room = room;
   }
 }
 function Player(...args) {
@@ -41,6 +42,7 @@ function playerJSON(player) {
     damage: player.damage,
     color: player.color,
     id: player.socket.id,
+    room: player.room 
   };
 
   return JSON.stringify(obj);
@@ -64,10 +66,12 @@ function otherPlayersJSON(player) {
   let res = [];
 
   for (let tmp = 0; tmp < players.length; tmp++) {
-    if (players[tmp] === player) {
-      continue;
+    if (players[tmp].room === player.room) {
+      if (players[tmp] === player) {
+        continue;
+      }
+      res.push(playerJSON(players[tmp]));
     }
-    res.push(playerJSON(players[tmp]));
   }
 
   return res;
@@ -104,8 +108,9 @@ io.on("connection", (socket) => {
   console.log(`Client connected with id: ${socket.id}`);
   onLine++;
 
-  socket.on("MTS:Player_Name", (msg) => {
-    let playerConnect = Player(msg, 0, 0, 0, 100, 1, "red", socket);
+  socket.on("MTS:Player_Settings", (msg) => {
+    msg = msg.split('|');
+    let playerConnect = Player(msg[0], 0, 0, 0, 100, 1, "red", socket, msg[1]);
     players.push(playerConnect);
     playerConnect.socket.emit("MFS:Get_Player", playerJSON(playerConnect));
     reloadOtherPlayers();

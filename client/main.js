@@ -11,7 +11,9 @@ async function main() {
     document.getElementById("playerName").onkeyup = (ev) => {
       if (ev.code === "Enter") {
         let playerName = document.getElementById("playerName").value;
-        socket.emit("MTS:Player_Name", playerName);
+        let playerRoom = document.getElementById("room").value;
+
+        socket.emit("MTS:Player_Settings", [playerName, playerRoom].join('|'));
       }
     }
   });
